@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react"
+import data from "./data-nested.json"
 
-function App() {
+export const CustomButton = ({ fileName, children }) => {
+  const [enable, seEnable] = useState(true)
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div onClick={() => seEnable(!enable)}>
+        {children ? (
+          <button> {fileName} </button>
+        ) : (
+          <span style={{ color: "blue" }}>{fileName} </span>
+        )}
+      </div>
+      {enable && <div> {children}</div>}
     </div>
-  );
+  )
 }
 
-export default App;
+export const CreateButton = ({ data }) => {
+  const fileName = data.fileName
+  const children = data?.children
+
+  return (
+    <CustomButton fileName={fileName}>
+      {children &&
+        children.map((obj) => {
+          return (
+            <div style={{ marginLeft: "40px" }}>
+              <CreateButton data={obj} />
+            </div>
+          )
+        })}
+    </CustomButton>
+  )
+}
+
+export default function App() {
+  return (
+    <div>
+      <CreateButton data={data} />
+    </div>
+  )
+}
